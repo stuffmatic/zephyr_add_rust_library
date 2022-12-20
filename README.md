@@ -1,3 +1,5 @@
+# zephyr\_add\_rust\_library
+
 `zephyr_add_rust_library` is an easy to use and self contained CMake function for adding Rust library crate dependencies to a [Zephyr](https://zephyrproject.org/) app. This repo contains a minimal Zephyr test app using this function, which is defined in [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake).
 
 With this workflow
