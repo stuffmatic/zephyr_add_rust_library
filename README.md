@@ -1,13 +1,16 @@
 # zephyr\_add\_rust\_library
 
-`zephyr_add_rust_library` is an easy to use and self contained CMake function for adding Rust library crate dependencies to a [Zephyr](https://zephyrproject.org/) app. This repo contains a minimal Zephyr test app using this function, which is defined in [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake).
+This repo contains 
 
-With this workflow
+* the CMake function `zephyr_add_rust_library` used for adding Rust library crate dependencies to [Zephyr](https://zephyrproject.org/) apps. This funcition is defined in [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake).
+* a minimal Zephyr test app
+
+Using `zephyr_add_rust_library` has the following benefits:
 
 * crates are automatically compiled to static libraries as part of the Zephyr build process
+* adding and removing Rust dependencies is easy
 * debugging works seamlessly
-* build artefacts are output to the Zephyr build folder, which makes it easy to clean up build output
-* building a crate reduces to a no-op if the Rust code hasn't changed (handled by `cargo`). 
+* Rust build artefacts are output to the Zephyr build folder
 
 ⚠️ __The code in this repo should be considered work in progress.__ If you run into any issues, please consider [reporting them](https://github.com/stuffmatic/zephyr_add_rust_library/issues) or [submitting a PR](https://github.com/stuffmatic/zephyr_add_rust_library/pulls)!
 
@@ -37,5 +40,5 @@ If you're new to calling Rust code from C, you may find [this documentation](htt
 
 `zephyr_add_rust_library.cmake` should be considered work in progress and has so far been tested on macOS using the ninja generator to build for nRF52/nRF53 SOCs with Cortex M4/M33 architectures. Known issues include:
 
-* __Limited cargo target selection__ - `zephyr_add_rust_library` uses KConfig variables like `CONFIG_FPU`, `CONFIG_CPU_CORTEX_M4` etc to set a suitable `cargo` target. This mapping is by no means complete and only supports some Cortex M architectures at the time of writing.
-* __Ignored duplicate symbols__ - Library crate dependencies are linked using `--allow-multiple-definition` to silence errors when when linking multiple libraries containing the same compiler builtins. Unfortunately, this means that other duplicate definitions will also go unnoticed and it's up to the user to detect these.
+* __Limited cargo target selection__ - `zephyr_add_rust_library` uses KConfig variables like `CONFIG_FPU`, `CONFIG_CPU_CORTEX_M4` etc to set a suitable `cargo` target. This mapping is not complete and only supports some Cortex M architectures at the time of writing.
+* __Ignored duplicate symbols__ - Library crate dependencies are linked using `--allow-multiple-definition` to silence errors when when linking multiple libraries containing the same compiler builtins. Unfortunately, this means that legitimate multiple definition errors will also go unnoticed and it's up to the user to detect these.
