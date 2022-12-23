@@ -10,16 +10,18 @@ target_sources(app PRIVATE src/main.c)
 # Import the zephyr_add_rust_library function
 include(zephyr_add_rust_library.cmake)
 
-# Add rust-lib-1 dependency.
+# Add rust-lib-1 dependency, which depends on std by default.
+# Pass extra cargo args to disable default features.
 zephyr_add_rust_library(
-  rust-lib-1 # name with dashes
-  ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1
-  ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1/include
+  CRATE_NAME rust-lib-1 # name with dashes
+  CRATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1
+  CRATE_HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1/include
+  EXTRA_CARGO_ARGS --no-default-features
 )
 
-# Add rust_lib_2 dependency.
+# Add rust_lib_2 dependency
 zephyr_add_rust_library(
-  rust_lib_2 # name with underscores
-  ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2
-  ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2/include
+  CRATE_NAME rust_lib_2 # name with underscores
+  CRATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2
+  CRATE_HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2/include
 )

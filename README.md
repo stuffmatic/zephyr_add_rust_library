@@ -1,6 +1,6 @@
 # zephyr\_add\_rust\_library
 
-This repo contains 
+This repo contains
 
 * the CMake function `zephyr_add_rust_library` used for adding Rust library crate dependencies to [Zephyr](https://zephyrproject.org/) apps. This funcition is defined in [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake).
 * a minimal Zephyr test app
@@ -24,13 +24,13 @@ include(zephyr_add_rust_library.cmake)
 
 # Add my-lib-crate crate dependency.
 zephyr_add_rust_library(
-  my-lib-crate # Crate name as specified in Cargo.toml
-  ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate # Crate root dir
-  ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate/include # C header dir
+  CRATE_NAME my-lib-crate # Crate name as specified in Cargo.toml
+  CRATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate # Crate root dir
+  CRATE_HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate/include # C header dir
 )
 ```
 
-`${CMAKE_CURRENT_SOURCE_DIR}` is the directory containing your `CMakeLists.txt`. For more details, see the documentation at the top of [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake).
+`${CMAKE_CURRENT_SOURCE_DIR}` is the directory containing your `CMakeLists.txt`. For additional arguments and more detailed documentation, see [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake).
 
 Errors along the lines of `Could not find specification for target ...` indicate that you need to add a Rust target corresponding to the architechure you're building for. To do this, run `rustup target add [target]`, where `[target]` is the name of the target in the error message (a complete list of targets can be found [here](https://doc.rust-lang.org/nightly/rustc/platform-support.html)).
 

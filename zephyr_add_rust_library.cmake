@@ -4,26 +4,52 @@ include(ExternalProject)
 # rust crate that is compiled to a static library and
 # linked into the app. By deafult, the crate is compiled
 # in release mode unless CONFIG_DEBUG_OPTIMIZATIONS is set.
-# To override this behavior, set CARGO_PROFILE to 'release'
-# or 'debug' before calling the function.
+# To override this behavior, use the CARGO_PROFILE argument.
 #
-# Parameters:
+# Arguments:
 #
-# crate_name   - The name of the crate as specified in Cargo.toml
-# crate_root   - Absolute path to the crate's root folder
-# include_path - Absolute path to a folder containing the C wrapper header(s).
-#                This path gets added to the header search paths. If for example
-#                header.h is placed under include_path, it can be included
-#                from the app code like this: #include <header.h>.
-function(
-  zephyr_add_rust_library
-  crate_name
-  crate_root
-  include_path
+# CRATE_NAME        - Required. The name of the crate as specified
+#                     in Cargo.toml
+# CRATE_PATH        - Required. Absolute path to the crate's root folder
+# CRATE_HEADER_PATH - Required. Absolute path to a folder containing the
+#                     C wrapper header(s). This path gets added to the header
+#                     search paths. If for example header.h is placed under
+#                     include_path, it can be included from the app code
+#                     like this: #include <header.h>.
+# EXTRA_CARGO_ARGS  - Optional. Extra arguments to pass to cargo. Can for
+#                     example be used for feature selection.
+# CARGO_PROFILE     - Optional. Name of cargo build profile to use. One of
+#                     "release" or "debug". overrides the automatically
+#                     selected profile.
+function(zephyr_add_rust_library)
+cmake_parse_arguments(
+    PARSED_ARGS
+    ""
+    "CRATE_NAME;CRATE_PATH;CRATE_HEADER_PATH;EXTRA_CARGO_ARGS;CARGO_PROFILE" # list of names of mono-valued arguments
+    ""
+    ${ARGN}
 )
 
+# Check required arguments
+if(NOT DEFINED PARSED_ARGS_CRATE_NAME)
+  message(FATAL_ERROR "Missing CRATE_NAME")
+endif()
+if(NOT DEFINED PARSED_ARGS_CRATE_PATH)
+  message(FATAL_ERROR "Missing CRATE_PATH")
+endif()
+if(NOT DEFINED PARSED_ARGS_CRATE_HEADER_PATH)
+  message(FATAL_ERROR "Missing CRATE_HEADER_PATH")
+endif()
+
+# Store parsed arguments
+set(CRATE_NAME ${PARSED_ARGS_CRATE_NAME})
+set(CRATE_PATH ${PARSED_ARGS_CRATE_PATH})
+set(CRATE_HEADER_PATH ${PARSED_ARGS_CRATE_HEADER_PATH})
+set(CARGO_PROFILE ${PARSED_ARGS_CARGO_PROFILE})
+set(EXTRA_CARGO_ARGS ${PARSED_ARGS_EXTRA_CARGO_ARGS})
+
 # - gets replaced with _ in build artefacts created by cargo
-string(REPLACE "-" "_" SANITIZED_LIB_NAME ${crate_name})
+string(REPLACE "-" "_" SANITIZED_LIB_NAME ${CRATE_NAME})
 
 # cargo adds the prefix lib to static libraries
 set(LIB_FILENAME lib${SANITIZED_LIB_NAME}.a)
@@ -38,9 +64,11 @@ endif()
 
 # Set args to pass to cargo build depending on build profile
 if (${CARGO_PROFILE} STREQUAL "debug")
-  set(CARGO_ARGS "")
+  set(CARGO_PROFILE_ARGS "")
+elseif(${CARGO_PROFILE} STREQUAL "release")
+  set(CARGO_PROFILE_ARGS --release)
 else()
-  set(CARGO_ARGS --release)
+  message(FATAL_ERROR "Invalid cargo profile ${CARGO_PROFILE}. Must be debug or release.")
 endif()
 
 # Select a cargo build target suitable for the current CPU
@@ -66,7 +94,7 @@ else()
 endif()
 
 # Output cargo build artefacts to the cmake build folder
-set(CARGO_TARGET_DIR ${CMAKE_BINARY_DIR}/rust_crates/${crate_name})
+set(CARGO_TARGET_DIR ${CMAKE_BINARY_DIR}/rust_crates/${CRATE_NAME})
 
 # Add an external project for building the rust library.
 # Inspired by the external_lib zephyr example.
@@ -75,21 +103,21 @@ set(EXT_PROJ_NAME rust_ext_proj_${SANITIZED_LIB_NAME})
 
 ExternalProject_Add(
   ${EXT_PROJ_NAME}
-  BINARY_DIR ${crate_root}
+  BINARY_DIR ${CRATE_PATH}
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND CARGO_TARGET_DIR=${CARGO_TARGET_DIR} cargo rustc --crate-type staticlib --target ${CARGO_TARGET} ${CARGO_ARGS}
+  BUILD_COMMAND CARGO_TARGET_DIR=${CARGO_TARGET_DIR} cargo rustc --crate-type staticlib --target ${CARGO_TARGET} ${CARGO_PROFILE_ARGS} ${EXTRA_CARGO_ARGS}
   INSTALL_COMMAND ""
-  SOURCE_DIR ${crate_root}
+  SOURCE_DIR ${CRATE_PATH}
   BUILD_BYPRODUCTS ${LIB_PATH}
   BUILD_ALWAYS true # Always run cargo build. Reduces to a no-op if the built library is up to date.
-  COMMENT "Building rust library '${crate_name}' target='${CARGO_TARGET}' profile='${CARGO_PROFILE}' args='${CARGO_ARGS}'"
+  COMMENT "Building rust library '${CRATE_NAME}' target='${CARGO_TARGET}' profile='${CARGO_PROFILE}' args='${CARGO_PROFILE_ARGS}'"
 )
 add_library(${LIB_FILENAME} STATIC IMPORTED GLOBAL)
 add_dependencies(${LIB_FILENAME} ${EXT_PROJ_NAME})
 set_target_properties(${LIB_FILENAME} PROPERTIES IMPORTED_LOCATION ${LIB_PATH})
 
 # Add C headers dir to include directories
-set_target_properties(${LIB_FILENAME} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${include_path})
+set_target_properties(${LIB_FILENAME} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${CRATE_HEADER_PATH})
 
 # Link static library. --allow-multiple-definition
 # is needed when linking to multiple rust libs that may

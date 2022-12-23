@@ -1,9 +1,9 @@
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 use core::panic::PanicInfo;
 
 #[panic_handler]
-#[cfg(not(test))] // https://github.com/rust-lang/rust-analyzer/issues/4490
+#[cfg(not(feature = "std"))] // https://github.com/rust-lang/rust-analyzer/issues/4490
 fn panic(_panic: &PanicInfo<'_>) -> ! {
     loop {}
 }
