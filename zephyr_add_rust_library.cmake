@@ -10,8 +10,8 @@ include(ExternalProject)
 #
 # CRATE_NAME        - Required. The name of the crate as specified
 #                     in Cargo.toml
-# CRATE_PATH        - Required. Absolute path to the crate's root folder
-# CRATE_HEADER_PATH - Required. Absolute path to a folder containing the
+# CRATE_DIR         - Required. Absolute path to the crate's root folder
+# CRATE_HEADER_DIR  - Required. Absolute path to a folder containing the
 #                     C wrapper header(s). This path gets added to the header
 #                     search paths. If for example header.h is placed under
 #                     include_path, it can be included from the app code
@@ -25,7 +25,7 @@ function(zephyr_add_rust_library)
 cmake_parse_arguments(
     PARSED_ARGS
     ""
-    "CRATE_NAME;CRATE_PATH;CRATE_HEADER_PATH;EXTRA_CARGO_ARGS;CARGO_PROFILE"
+    "CRATE_NAME;CRATE_DIR;CRATE_HEADER_DIR;EXTRA_CARGO_ARGS;CARGO_PROFILE"
     ""
     ${ARGN}
 )
@@ -34,17 +34,17 @@ cmake_parse_arguments(
 if(NOT DEFINED PARSED_ARGS_CRATE_NAME)
   message(FATAL_ERROR "Missing CRATE_NAME")
 endif()
-if(NOT DEFINED PARSED_ARGS_CRATE_PATH)
-  message(FATAL_ERROR "Missing CRATE_PATH")
+if(NOT DEFINED PARSED_ARGS_CRATE_DIR)
+  message(FATAL_ERROR "Missing CRATE_DIR")
 endif()
-if(NOT DEFINED PARSED_ARGS_CRATE_HEADER_PATH)
-  message(FATAL_ERROR "Missing CRATE_HEADER_PATH")
+if(NOT DEFINED PARSED_ARGS_CRATE_HEADER_DIR)
+  message(FATAL_ERROR "Missing CRATE_HEADER_DIR")
 endif()
 
 # Store parsed arguments
 set(CRATE_NAME ${PARSED_ARGS_CRATE_NAME})
-set(CRATE_PATH ${PARSED_ARGS_CRATE_PATH})
-set(CRATE_HEADER_PATH ${PARSED_ARGS_CRATE_HEADER_PATH})
+set(CRATE_DIR ${PARSED_ARGS_CRATE_DIR})
+set(CRATE_HEADER_DIR ${PARSED_ARGS_CRATE_HEADER_DIR})
 set(CARGO_PROFILE ${PARSED_ARGS_CARGO_PROFILE})
 set(EXTRA_CARGO_ARGS ${PARSED_ARGS_EXTRA_CARGO_ARGS})
 
@@ -103,11 +103,11 @@ set(EXT_PROJ_NAME rust_ext_proj_${SANITIZED_LIB_NAME})
 
 ExternalProject_Add(
   ${EXT_PROJ_NAME}
-  BINARY_DIR ${CRATE_PATH}
+  BINARY_DIR ${CRATE_DIR}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND CARGO_TARGET_DIR=${CARGO_TARGET_DIR} cargo rustc --crate-type staticlib --target ${CARGO_TARGET} ${CARGO_PROFILE_ARGS} ${EXTRA_CARGO_ARGS}
   INSTALL_COMMAND ""
-  SOURCE_DIR ${CRATE_PATH}
+  SOURCE_DIR ${CRATE_DIR}
   BUILD_BYPRODUCTS ${LIB_PATH}
   BUILD_ALWAYS true # Always run cargo build. Reduces to a no-op if the built library is up to date.
   COMMENT "Building rust library '${CRATE_NAME}' target='${CARGO_TARGET}' profile='${CARGO_PROFILE}' args='${CARGO_PROFILE_ARGS}'"
@@ -117,7 +117,7 @@ add_dependencies(${LIB_FILENAME} ${EXT_PROJ_NAME})
 set_target_properties(${LIB_FILENAME} PROPERTIES IMPORTED_LOCATION ${LIB_PATH})
 
 # Add C headers dir to include directories
-set_target_properties(${LIB_FILENAME} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${CRATE_HEADER_PATH})
+set_target_properties(${LIB_FILENAME} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${CRATE_HEADER_DIR})
 
 # Link static library. --allow-multiple-definition
 # is needed when linking to multiple rust libs that may

@@ -29,8 +29,8 @@ include(zephyr_add_rust_library.cmake)
 # Add my-lib-crate crate dependency.
 zephyr_add_rust_library(
   CRATE_NAME my-lib-crate # Crate name as specified in Cargo.toml
-  CRATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate # Crate root dir
-  CRATE_HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate/include # C header dir
+  CRATE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate # Crate root dir
+  CRATE_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/my-lib-crate/include # C header dir
 )
 ```
 

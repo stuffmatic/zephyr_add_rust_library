@@ -14,14 +14,14 @@ include(zephyr_add_rust_library.cmake)
 # Pass extra cargo args to disable default features.
 zephyr_add_rust_library(
   CRATE_NAME rust-lib-1 # name with dashes
-  CRATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1
-  CRATE_HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1/include
+  CRATE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1
+  CRATE_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_1/include
   EXTRA_CARGO_ARGS --no-default-features
 )
 
 # Add rust_lib_2 dependency
 zephyr_add_rust_library(
   CRATE_NAME rust_lib_2 # name with underscores
-  CRATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2
-  CRATE_HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2/include
+  CRATE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2
+  CRATE_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/rust_lib_2/include
 )
