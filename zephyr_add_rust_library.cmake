@@ -16,7 +16,7 @@ include(ExternalProject)
 #                header.h is placed under include_path, it can be included
 #                from the app code like this: #include <header.h>.
 function(
-  add_rust_library
+  zephyr_add_rust_library
   crate_name
   crate_root
   include_path
@@ -77,7 +77,7 @@ ExternalProject_Add(
   ${EXT_PROJ_NAME}
   BINARY_DIR ${crate_root}
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND CARGO_TARGET_DIR=${CARGO_TARGET_DIR} cargo build --target ${CARGO_TARGET} ${CARGO_ARGS}
+  BUILD_COMMAND CARGO_TARGET_DIR=${CARGO_TARGET_DIR} cargo rustc --crate-type staticlib --target ${CARGO_TARGET} ${CARGO_ARGS}
   INSTALL_COMMAND ""
   SOURCE_DIR ${crate_root}
   BUILD_BYPRODUCTS ${LIB_PATH}

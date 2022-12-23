@@ -1,5 +1,5 @@
 [package]
-name = "rust_lib_1"
+name = "rust-lib-1"
 version = "0.1.0"
 edition = "2021"
 
