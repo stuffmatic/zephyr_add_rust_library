@@ -14,6 +14,10 @@ Using `zephyr_add_rust_library` has the following benefits:
 
 ⚠️ __The code in this repo should be considered work in progress.__ If you run into any issues, please consider [reporting them](https://github.com/stuffmatic/zephyr_add_rust_library/issues) or [submitting a PR](https://github.com/stuffmatic/zephyr_add_rust_library/pulls)!
 
+## Prerequisites
+
+The reader is assumed to be familiar with the basics of [`no_std` Rust](https://docs.rust-embedded.org/book/intro/no-std.html) and [how to call Rust code from C](https://docs.rust-embedded.org/book/interoperability/rust-with-c.html).
+
 ## Usage
 
 First, make sure you have [installed Rust](https://www.rust-lang.org/tools/install). Then put [`zephyr_add_rust_library.cmake`](zephyr_add_rust_library.cmake) in the same directory as your `CMakeLists.txt`. To add a dependency on a library crate named `my-lib-crate`, add these lines to your `CMakeLists.txt`:
@@ -34,7 +38,6 @@ zephyr_add_rust_library(
 
 Errors along the lines of `Could not find specification for target ...` indicate that you need to add a Rust target corresponding to the architechure you're building for. To do this, run `rustup target add [target]`, where `[target]` is the name of the target in the error message (a complete list of targets can be found [here](https://doc.rust-lang.org/nightly/rustc/platform-support.html)).
 
-If you're new to calling Rust code from C, you may find [this documentation](https://docs.rust-embedded.org/book/interoperability/rust-with-c.html) helpful.
 
 ## Known issues and future work
 
