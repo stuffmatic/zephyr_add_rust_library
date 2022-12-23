@@ -1,7 +1,7 @@
 include(ExternalProject)
 
 # A helper function for adding a dependency on a
-# rust crate that is compiled to a static library and
+# Rust crate to be compiled to a static library and
 # linked into the app. By deafult, the crate is compiled
 # in release mode unless CONFIG_DEBUG_OPTIMIZATIONS is set.
 # To override this behavior, use the CARGO_PROFILE argument.
@@ -19,13 +19,13 @@ include(ExternalProject)
 # EXTRA_CARGO_ARGS  - Optional. Extra arguments to pass to cargo. Can for
 #                     example be used for feature selection.
 # CARGO_PROFILE     - Optional. Name of cargo build profile to use. One of
-#                     "release" or "debug". overrides the automatically
+#                     "release" or "debug". Overrides the automatically
 #                     selected profile.
 function(zephyr_add_rust_library)
 cmake_parse_arguments(
     PARSED_ARGS
     ""
-    "CRATE_NAME;CRATE_PATH;CRATE_HEADER_PATH;EXTRA_CARGO_ARGS;CARGO_PROFILE" # list of names of mono-valued arguments
+    "CRATE_NAME;CRATE_PATH;CRATE_HEADER_PATH;EXTRA_CARGO_ARGS;CARGO_PROFILE"
     ""
     ${ARGN}
 )
