@@ -17,7 +17,7 @@ include(ExternalProject)
 #                     include_path, it can be included from the app code
 #                     like this: #include <header.h>.
 # EXTRA_CARGO_ARGS  - Optional. Extra arguments to pass to cargo. Can for
-#                     example be used for feature selection.
+#                     example be used to select features or change the log level.
 # CARGO_PROFILE     - Optional. Name of cargo build profile to use. One of
 #                     "release" or "debug". Overrides the automatically
 #                     selected profile.
@@ -25,8 +25,8 @@ function(zephyr_add_rust_library)
 cmake_parse_arguments(
     PARSED_ARGS
     ""
-    "CRATE_NAME;CRATE_DIR;CRATE_HEADER_DIR;EXTRA_CARGO_ARGS;CARGO_PROFILE"
-    ""
+    "CRATE_NAME;CRATE_DIR;CRATE_HEADER_DIR;CARGO_PROFILE"
+    "EXTRA_CARGO_ARGS"
     ${ARGN}
 )
 
